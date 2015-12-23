@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6 lt8"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7 lt8"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8 lt8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="UTF-8" />
+        <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  -->
+        <title>Edit Employee</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <meta name="description" content="Edit employee ppage" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-theme.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename ='demo.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename ='style.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename ='animate-custom.css') }}" />
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <a href="{{ url_for('companyList') }}"><h1>Employee <span>Hub</span></h1></a>
+            </header>
+            <section>				
+                <div id="container_demo" >
+                    <div id="wrapper">
+                        <div id="login" class="animate form">
+                            <form  action="{{ url_for('editEmployee', company_id = company_id, employee_id = employee.id) }}" method="post" autocomplete="on"> 
+                                <h1>Edit Employee</h1> 
+                                <p> 
+                                    <label for="firstname" class="uname">First Name </label>
+                                    <input id="firstname" name="firstname" required="required" value="{{ employee.firstname }}" type="text"/>
+                                </p>
+                                <p> 
+                                    <label for="lastname" class="uname">Last Name </label>
+                                    <input id="lastname" value="{{ employee.lastname }}" name="lastname" required="required" type="text" /> 
+                                </p>
+                                <p> 
+                                    <label for="zipcode" class="uname">Zipcode </label>
+                                    <input id="zipcode" value="{{ employee.zipcode }}" name="zipcode" required="required" type="text" onkeypress="return isNumber(event)" placeholder="11111"/> 
+                                </p>
+                                <p> 
+                                    <label for="birthdate" class="uname">Birthday </label>
+                                    <div class="datefield">
+                                         <input id="month" value="{{ employee.birthmonth }}" name="birthmonth" type="tel" maxlength="2" onkeypress="return isNumber(event)" placeholder="MM"/>/
+                                        <input id="day" name="birthday" type="tel" maxlength="2" value="{{ employee.birthday }}" onkeypress="return isNumber(event)" placeholder="DD"/> /
+                                        <input id="year" value="{{ employee.birthyear }}" name="birthyear" type="tel" maxlength="4" onkeypress="return isNumber(event)" placeholder="YYYY"/>
+                                    </div>
+                                </p>
+                                <p class="submit button"> 
+                                    <input type="submit" value="Edit" /> 
+								</p>
+                                <p class="change_link">
+									Change your mind ?
+									<a href="{{ url_for('employeeList', company_id = company_id) }}" class="to_register">Cancel</a>
+								</p>
+                            </form>
+                        </div>
+                    </div>
+                </div>  
+            </section>
+        </div>
+    </body>
+    <script type="text/javascript">
+        function isNumber(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+    </script>
+</html>

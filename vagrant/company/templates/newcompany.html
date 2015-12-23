@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6 lt8"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7 lt8"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8 lt8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="UTF-8" />
+        <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  -->
+        <title>New Company</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <meta name="description" content="New Company page" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-theme.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename ='demo.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename ='style.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename ='animate-custom.css') }}" />
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <a href="{{ url_for('companyList') }}"><h1>Employee <span>Hub</span></h1></a>
+            </header>
+            <section>				
+                <div id="container_demo" >
+                    <div id="wrapper">
+                        <div id="login" class="animate form">
+                            <form  action="{{ url_for('newCompany') }}" autocomplete="on" method="post"> 
+                                <h1>New Company</h1> 
+                                <p> 
+                                    <label for="name" class="uname">Name </label>
+                                    <input id="name" name="name" required="required" type="text" />
+                                </p>
+                                
+                                <p class="submit button"> 
+                                    <input type="submit" value="Submit" /> 
+								</p>
+                                <p class="change_link">
+									Change your mind ?
+									<a href="{{ url_for('companyList') }}" class="to_register">Cancel</a>
+								</p>
+                            </form>
+                        </div>
+                    </div>
+                </div>  
+            </section>
+        </div>
+    </body>
+</html>

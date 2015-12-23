@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6 lt8"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7 lt8"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8 lt8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="UTF-8" />
+        <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  -->
+        <title>Employee List</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <meta name="description" content="Employee list page" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-theme.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename ='demo.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename ='style.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename ='animate-custom.css') }}" />
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <a href="{{ url_for('companyList') }}"><h1>Employee <span>Hub</span></h1></a>
+            </header>
+            <section>				
+                <div id="container">
+                    <div class="row">
+                        <div class="col-md-6 col-md-offset-3">
+                            <h2><u>{{ company.name }}</u></h2><br><br>
+                            {% with messages = get_flashed_messages() %}
+                            	{% if messages %}
+                            		<ul>
+                            			{% for message in messages %}
+                            			<li class="success"><strong>{{ message }}</strong></li>
+                            			{% endfor %}
+                            		</ul>
+                            	{% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-md-offset-3">
+                        {% for i in employees %}
+                        	<h3>
+                        		<a href="{{ url_for('editEmployee', company_id = company.id, employee_id = i.id) }}">{{ i.firstname }} {{ i.lastname }}</a>
+                        	</h3>
+                            <p>{{ i.zipcode }}</p>
+                        	<a href="{{ url_for('editEmployee', company_id = company.id, employee_id = i.id) }}">Edit</a></br>
+                            <a href="{{ url_for('deleteEmployee', company_id = company.id, employee_id = i.id) }}">Delete</a></br></br>
+                        {% endfor %}	
+                        <a href="{{ url_for('newEmployee', company_id = company.id) }}" class="btn btn-default">
+                        	Create New Employee
+                        </a>
+                </div>
+                </div>  
+            </section>
+        </div>
+    </body>
+</html>
