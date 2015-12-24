@@ -5,7 +5,7 @@ from database_setup import Base, Company, Employee
 
 app = Flask(__name__)
 
-engine = create_engine('postgres://sidnyhkwqbgjkt:CexV9BNqGXnscszhGJvK4oK9wj@ec2-107-22-184-127.compute-1.amazonaws.com:5432/dedc5jc5msbsv3')
+engine = create_engine('sqlite:///companyemployees.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -129,7 +129,7 @@ def deleteEmployee(company_id, employee_id):
         return render_template('deleteemployee.html', company_id =
             company_id, employee_id = employee_id, employee = employee)
 
-#if __name__ == '__main__':
+if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
- #   app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=7000)

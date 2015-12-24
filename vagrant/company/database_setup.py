@@ -42,6 +42,6 @@ class Employee(Base):
             'birthyear': self.birthyear,
         }
 
-engine = create_engine('postgres://sidnyhkwqbgjkt:CexV9BNqGXnscszhGJvK4oK9wj@ec2-107-22-184-127.compute-1.amazonaws.com:5432/dedc5jc5msbsv3')
+engine = create_engine('sqlite:///companyemployees.db')
 
 Base.metadata.create_all(engine)
