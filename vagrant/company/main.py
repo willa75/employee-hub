@@ -1,47 +1,32 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import exc
-from sqlalchemy import event
-from sqlalchemy import select
+from sqlalchemy.orm import sessionmaker, scoped_session
 from database_setup import Base, Company, Employee
+from flask import g
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///companyemployees.db')
+engine = create_engine('sqlite:////home/anthonywi99/mysite/company.db')
+connection = engine.connect()
+trans = connection.begin()
 Base.metadata.bind = engine
-
-#Added code to deal with db disconnect issue on pythonanywhere
-@event.listens_for(some_engine, "engine_connect")
-def ping_connection(connection, branch):
-    if branch:
-        # "branch" refers to a sub-connection of a connection,
-        # we don't want to bother pinging on these.
-        return
-
-    try:
-        # run a SELECT 1.   use a core select() so that
-        # the SELECT of a scalar value without a table is
-        # appropriately formatted for the backend
-        connection.scalar(select([1]))
-    except exc.DBAPIError as err:
-        # catch SQLAlchemy's DBAPIError, which is a wrapper
-        # for the DBAPI's exception.  It includes a .connection_invalidated
-        # attribute which specifies if this connection is a "disconnect"
-        # condition, which is based on inspection of the original exception
-        # by the dialect in use.
-        if err.connection_invalidated:
-            # run the same SELECT again - the connection will re-validate
-            # itself and establish a new connection.  The disconnect detection
-            # here also causes the whole connection pool to be invalidated
-            # so that all stale connections are discarded.
-            connection.scalar(select([1]))
-        else:
-            raise
-
-
-DBSession = sessionmaker(bind=engine)
+DBSession = scoped_session(sessionmaker(bind=engine))
 session = DBSession()
+
+@app.before_request
+def testConnection():
+    try:
+        session.query(Company).all()
+    except:
+        trans.rollback()
+        raise
+
+@app.after_request
+def call_after_request_callbacks(response):
+    DBSession.remove()
+    for callback in getattr(g, 'after_request_callbacks', ()):
+        callback(response)
+    return response
 
 @app.route('/')
 def companyList():
@@ -82,16 +67,14 @@ def employeeList(company_id):
 #Making an API Endpoint to get list of employees
 @app.route('/company/<int:company_id>/list/JSON')
 def employeeListJSON(company_id):
-    company = session.query(Company).filter_by(id = company_id).one()
-    employees = session.query(Employee).filter_by(company_id= 
+    employees = session.query(Employee).filter_by(company_id=
         company_id).all()
     return jsonify(Employees=[i.serialize for i in employees])
 
 #Making an API Endpoint to get one employee
 @app.route('/company/<int:company_id>/list/<int:employee_id>/JSON')
 def employeeJSON(company_id, employee_id):
-    company = session.query(Company).filter_by(id = company_id).one()
-    employee = session.query(Employee).filter_by(company_id= 
+    employee = session.query(Employee).filter_by(company_id=
         company_id, id = employee_id).one()
     return jsonify(Employee=employee.serialize)
 
@@ -101,27 +84,27 @@ def employeeJSON(company_id, employee_id):
     'GET', 'POST'])
 def newEmployee(company_id):
     if request.method == 'POST':
-        newemployee = Employee(firstname = request.form['firstname'], 
-            lastname = request.form['lastname'], zipcode = 
+        newemployee = Employee(firstname = request.form['firstname'],
+            lastname = request.form['lastname'], zipcode =
             request.form['zipcode'], birthyear = request.form['birthyear'],
-            birthmonth = request.form['birthmonth'], birthday = 
+            birthmonth = request.form['birthmonth'], birthday =
             request.form['birthday'], company_id = company_id)
         session.add(newemployee)
         session.commit()
         flash("New employee has been added!")
         return redirect(url_for('employeeList',company_id=company_id))
     if request.method == 'GET':
-        return render_template('newemployee.html', company_id = 
+        return render_template('newemployee.html', company_id =
             company_id)
-    
+
 
 # Edit employee
 
-@app.route('/company/<int:company_id>/employee/<int:employee_id>/', 
+@app.route('/company/<int:company_id>/employee/<int:employee_id>/',
     methods=['GET', 'POST'])
 def editEmployee(company_id, employee_id, ):
     if request.method == 'POST':
-        editEmployee = session.query(Employee).filter_by(id = employee_id, 
+        editEmployee = session.query(Employee).filter_by(id = employee_id,
             company_id = company_id).one()
         if editEmployee != []:
             editEmployee.firstname = request.form['firstname']
@@ -133,7 +116,7 @@ def editEmployee(company_id, employee_id, ):
             session.add(editEmployee)
             session.commit()
             flash("Your employee has been edited!")
-        return redirect(url_for('employeeList', company_id = 
+        return redirect(url_for('employeeList', company_id =
             company_id))
     elif request.method == 'GET':
         editEmployee = session.query(Employee).filter_by(id = employee_id,
@@ -161,7 +144,7 @@ def deleteEmployee(company_id, employee_id):
         return render_template('deleteemployee.html', company_id =
             company_id, employee_id = employee_id, employee = employee)
 
-if __name__ == '__main__':
-    app.secret_key = 'super_secret_key'
-    app.debug = True
-    app.run(host='0.0.0.0', port=5000)
+#if __name__ == '__main__':
+app.secret_key = 'super_secret_key'
+app.debug = True
+ #   app.run(host='0.0.0.0', port=5000)

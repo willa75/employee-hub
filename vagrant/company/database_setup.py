@@ -1,5 +1,3 @@
-import sys
-import os
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -42,6 +40,6 @@ class Employee(Base):
             'birthyear': self.birthyear,
         }
 
-engine = create_engine('sqlite:///companyemployees.db')
+engine = create_engine('sqlite:////home/anthonywi99/mysite/company.db')
 
 Base.metadata.create_all(engine)
