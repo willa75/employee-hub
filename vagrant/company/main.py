@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from database_setup import Base, Company, Employee
 from flask import g
+import bleach
 
 app = Flask(__name__)
 
@@ -37,7 +38,7 @@ def companyList():
 @app.route('/company/new/', methods=['GET', 'POST'])
 def newCompany():
     if request.method == 'POST':
-        newCompany = Company(name = request.form['name'])
+        newCompany = Company(name = bleach.clean(request.form['name']))
         session.add(newCompany)
         session.commit()
         return redirect(url_for('companyList'))
@@ -50,7 +51,7 @@ def editCompany(company_id):
     company = session.query(Company).filter_by(id=company_id).one()
     if request.method == 'POST':
         if company != []:
-            company.name = request.form['name']
+            company.name = bleach.clean(request.form['name'])
             session.add(company)
             session.commit()
             return redirect(url_for('companyList'))
@@ -84,11 +85,13 @@ def employeeJSON(company_id, employee_id):
     'GET', 'POST'])
 def newEmployee(company_id):
     if request.method == 'POST':
-        newemployee = Employee(firstname = request.form['firstname'],
-            lastname = request.form['lastname'], zipcode =
-            request.form['zipcode'], birthyear = request.form['birthyear'],
-            birthmonth = request.form['birthmonth'], birthday =
-            request.form['birthday'], company_id = company_id)
+        newemployee = Employee(firstname = 
+            bleach.clean(request.form['firstname']),
+            lastname = bleach.clean(request.form['lastname']), zipcode =
+            bleach.clean(request.form['zipcode']), birthyear = 
+            bleach.clean(request.form['birthyear']),
+            birthmonth = bleach.clean(request.form['birthmonth']), birthday =
+            bleach.clean(request.form['birthday']), company_id = company_id)
         session.add(newemployee)
         session.commit()
         flash("New employee has been added!")
@@ -107,12 +110,12 @@ def editEmployee(company_id, employee_id, ):
         editEmployee = session.query(Employee).filter_by(id = employee_id,
             company_id = company_id).one()
         if editEmployee != []:
-            editEmployee.firstname = request.form['firstname']
-            editEmployee.lastname = request.form['lastname']
-            editEmployee.zipcode = request.form['zipcode']
-            editEmployee.birthday = request.form['birthday']
-            editEmployee.birthmonth = request.form['birthmonth']
-            editEmployee.birthyear = request.form['birthyear']
+            editEmployee.firstname = bleach.clean(request.form['firstname'])
+            editEmployee.lastname = bleach.clean(request.form['lastname'])
+            editEmployee.zipcode = bleach.clean(request.form['zipcode'])
+            editEmployee.birthday = bleach.clean(request.form['birthday'])
+            editEmployee.birthmonth = bleach.clean(request.form['birthmonth'])
+            editEmployee.birthyear = bleach.clean(request.form['birthyear'])
             session.add(editEmployee)
             session.commit()
             flash("Your employee has been edited!")
